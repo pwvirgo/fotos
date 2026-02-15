@@ -1,17 +1,17 @@
 CREATE TABLE fotos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    path TEXT,
-    name TEXT,
-    bytes INTEGER,
-    dt_taken TEXT,
-    dt_created TEXT,
-    camera TEXT,
-    lens TEXT,
-    lat REAL,
-    lon REAL,
-    img_size TEXT,
-    duration TEXT,
-    MD5 TEXT
+    path        TEXT,
+    name        TEXT,
+    bytes       INTEGER,
+    dt_taken    TEXT,
+    dt_created  TEXT,
+    camera      TEXT,
+    lens        TEXT,
+    lat         REAL,
+    lon         REAL,
+    img_size    TEXT,
+    duration    TEXT,
+    md5         TEXT
 );
 
 CREATE TABLE actions (

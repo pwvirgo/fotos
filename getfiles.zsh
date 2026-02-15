@@ -10,7 +10,7 @@ if [[ ! -d "$TARGET_DIR" ]]; then
 fi
 
 exiftool -f -csv -r -d "%Y-%m-%d %H:%M:%S" \
--MD5 -FileSize# -DateTimeOriginal -CreateDate \
+-FileSize# -DateTimeOriginal -CreateDate \
 -Model -LensID -GPSLatitude# -GPSLongitude# -ImageSize -Duration \
 -ext jpg -ext jpeg -ext png -ext mov -ext mp4 -ext heic \
 "$TARGET_DIR"

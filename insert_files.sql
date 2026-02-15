@@ -1,3 +1,6 @@
+-- import data from CSV file into SQLite database
+-- MODIFY line 15 to match the name of your CSV file
+
 DROP TABLE IF EXISTS staging;
 
 -- Create staging with 12 columns - matchng Python output count
@@ -9,7 +12,7 @@ CREATE TABLE staging (
 .mode csv
 -- Import. Since the table exists, SQLite will skip the CSV header
 -- newer versions of SQLite can skip the header while creating the table
-.import --skip 1 tmp.csv staging
+.import --skip 1 art.csv staging
 
 INSERT INTO fotos (
     path, name, bytes, dt_taken, dt_created, camera, lens, lat, lon, 
