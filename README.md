@@ -7,23 +7,16 @@ using sqlite3
 
 1. create tables:  create_tables.sql 
 
-2. find files (Requires exiftool)
+2. create csv file (using exiftools in zsh script) 
+	and add MD5 column to csv using python
 
-./getfiles.zsh ~/a/projects/fotos/images > tmp1.csv
+	./getfiles.zsh ~/a/projects/fotos/images | ./add_MD5.py > tmp.csv
 
-3. add MD5 hash of file contents, split path and filename
+3. populate the database
 
-./add_MD5.py < tmp1.csv > tmp2.csv
-
-4. put 2 & 3 together
-
-./getfiles.zsh ~/a/projects/fotos/images | ./add_MD5.py > tmp2.csv
-
-5. populate the database
-
-sqlite3 foto.db
-.mode csv
-.read insert_files.sql
+	-	modify insert_files.sql to reference csv file from step 2
+	-	sqlite3 foto.db
+	-	.read insert_files.sql
 
 
 ## files:
@@ -35,13 +28,16 @@ sqlite3 foto.db
 -rw-r--r--@  README.md
 
 
-This is taking a long time but I hope to get good at it
 
 ## notes
-Gemini taught me about exiftool and got things working
+This is taking a long time but I hope to get good at it
+
+Gemini taught me about exiftool and got things working in zsh
 
 the exiftool was not creating a column for requested data if that item
 was not in any of the files it processed  add -f to force the issue.
 Now returns a column with '-' for each row. 
+
+claude code helped to write the modules
 
 use python to create MD5 hash because the exiftool fails to do that

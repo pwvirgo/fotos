@@ -12,7 +12,7 @@ CREATE TABLE staging (
 .mode csv
 -- Import. Since the table exists, SQLite will skip the CSV header
 -- newer versions of SQLite can skip the header while creating the table
-.import --skip 1 art.csv staging
+.import --skip 1 db.csv staging
 
 INSERT INTO fotos (
     path, name, bytes, dt_taken, dt_created, camera, lens, lat, lon, 
@@ -23,9 +23,3 @@ SELECT c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12 FROM staging;
 -- Cleanup
 DROP TABLE staging;
 
-drop view qui;
-
-CREATE VIEW  qui AS
-SELECT substr(name, 1, 10) as name, bytes, dt_taken, dt_created,
-	img_size, MD5, camera 
-FROM fotos;

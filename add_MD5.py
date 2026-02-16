@@ -33,12 +33,15 @@ def main():
     # Write to standard output
     writer = csv.DictWriter(sys.stdout, fieldnames=new_fields)
     writer.writeheader()
-    
+    once = False
     for row in reader:
         original_path = row.get('SourceFile', '')
-        
+        if not once:
+            sys.stderr.write(f"Processing: {original_path} and then all the rest\n")
+        once = True
+
         if original_path:
-            sys.stderr.write(f"Processing: {original_path}\n")
+            #sys.stderr.write(f"Processing: {original_path}\n")
             
             # Split path into directory and filename
             directory, filename = os.path.split(original_path)
