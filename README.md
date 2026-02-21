@@ -8,9 +8,9 @@ using sqlite3
 1. create tables:  create_tables.sql 
 
 2. create csv file (using exiftools in zsh script) 
-	and add MD5 column to csv using python
+	and then add MD5 column to the csv using python
 
-	./getfiles.zsh ~/a/projects/fotos/images | ./add_MD5.py > tmp.csv
+	./getfiles.zsh ~/a/projects/fotos/keep/images | ./add_MD5.py > fotos.csv
 
 3. populate the database
 

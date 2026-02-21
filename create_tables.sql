@@ -14,6 +14,14 @@ CREATE TABLE fotos (
     md5         TEXT
 );
 
+drop view if exists votos;
+create view votos as
+    select f.id, substr(f.path,43,99), f.name, f.dt_taken,
+        f.dt_created, f.camera, f.lens, f.lat, f.lon, f.img_size,
+        f.duration
+    from fotos f;
+
+
 CREATE TABLE actions (
    id INTEGER PRIMARY KEY AUTOINCREMENT,
    foto_id INTEGER NOT NULL,

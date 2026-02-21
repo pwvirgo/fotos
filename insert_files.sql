@@ -12,7 +12,7 @@ CREATE TABLE staging (
 .mode csv
 -- Import. Since the table exists, SQLite will skip the CSV header
 -- newer versions of SQLite can skip the header while creating the table
-.import --skip 1 db.csv staging
+.import --skip 1 fotos.csv staging
 
 INSERT INTO fotos (
     path, name, bytes, dt_taken, dt_created, camera, lens, lat, lon, 
