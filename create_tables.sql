@@ -14,20 +14,13 @@ CREATE TABLE fotos (
     md5         TEXT
 );
 
-drop view if exists votos;
-create view votos as
-    select f.id, substr(f.path,43,99), f.name, f.dt_taken,
-        f.dt_created, f.camera, f.lens, f.lat, f.lon, f.img_size,
-        f.duration
-    from fotos f;
+drop view if exists actions;
+create view actions as 
+	select f.id, f.path, f.name, n.action, n.category, n.title 
+		from fotos as f
+		join  notes as n
+		on f.id = n.fotos_id; 
 
+select * from xxx limit 6;
 
-CREATE TABLE actions (
-   id INTEGER PRIMARY KEY AUTOINCREMENT,
-   foto_id INTEGER NOT NULL,
-   act		TEXT,
-   dt_act	TEXT,
-   note		TEXT,
-   FOREIGN KEY (foto_id) REFERENCES fotos(id)
-);
 

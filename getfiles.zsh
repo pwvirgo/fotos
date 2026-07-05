@@ -9,7 +9,7 @@ if [[ ! -d "$TARGET_DIR" ]]; then
     exit 1
 fi
 
-exiftool -f -csv -r -d "%Y-%m-%d %H:%M:%S" \
+exiftool -f -sort -csv -r -d "%Y-%m-%d %H:%M:%S" \
 -FileSize# -DateTimeOriginal -CreateDate \
 -Model -LensID -GPSLatitude# -GPSLongitude# -ImageSize -Duration \
 -ext jpg -ext jpeg -ext png -ext mov -ext mp4 -ext heic \

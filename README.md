@@ -1,6 +1,8 @@
 # fotos database  2026-02-02
 
-Create a db of image files - names, dates, exif info
+Create a db of meta data about image files - names, dates, exif info
+
+(This is to be used with other apps to select, track, rename, document)
 
 ## execution instructions
 using sqlite3
@@ -14,7 +16,7 @@ using sqlite3
 
 3. populate the database
 
-	-	modify insert_files.sql to reference csv file from step 2
+	-	MODIFY insert_files.sql to reference csv file from step 2
 	-	sqlite3 foto.db
 	-	.read insert_files.sql
 
