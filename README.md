@@ -7,27 +7,29 @@ Create a db of meta data about image files - names, dates, exif info
 ## execution instructions
 using sqlite3
 
-1. create tables:  create_tables.sql 
+1. create tables:  `sqlite3 fotos.db < create_tables.sql`
 
-2. create csv file (using exiftools in zsh script) 
-	and then add MD5 column to the csv using python
+2. scan files and compute MD5 hashes:
 
-	./getfiles.zsh ~/a/projects/fotos/keep/images | ./add_MD5.py > fotos.csv
+	`./getfiles.zsh ~/a/projects/fotos/keep/images | ./add_MD5.py > fotos.csv`
 
-3. populate the database
+3. populate the database:
 
-	-	MODIFY insert_files.sql to reference csv file from step 2
-	-	sqlite3 foto.db
-	-	.read insert_files.sql
+	```
+	sqlite3 fotos.db
+	.read insert_files.sql
+	```
+
+See CLAUDE.md for full technical reference, architecture details, and known issues.
 
 
 ## files:
--rwxr-xr-x@  add_MD5.py
--rw-r--r--@  create_tables.sql
--rw-r--r--   fotos.db
--rwxr-xr-x@  getfiles.zsh
--rw-r--r--@  insert_files.sql
--rw-r--r--@  README.md
+- `getfiles.zsh` — scans media files with exiftool, outputs CSV
+- `add_MD5.py` — reads CSV from stdin, adds MD5 column, writes to stdout
+- `delete_files.py` — deletes files listed in a CSV (supports --dry-run)
+- `create_tables.sql` — creates the fotos table and actions view
+- `insert_files.sql` — loads fotos.csv into the database
+- `fotos.db` — the SQLite database
 
 
 

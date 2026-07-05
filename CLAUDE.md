@@ -22,7 +22,7 @@ The workflow is a linear 4-step pipeline:
 sqlite3 fotos.db < create_tables.sql
 
 # 2. Scan files and enrich with MD5 hashes (piped together)
-./getfiles.zsh ~/a/projects/fotos/images | ./add_MD5.py > tmp2.csv
+./getfiles.zsh ~/a/projects/fotos/keep/images | ./add_MD5.py > fotos.csv
 
 # 3. Load into database
 sqlite3 fotos.db
@@ -30,10 +30,10 @@ sqlite3 fotos.db
 .read insert_files.sql
 ```
 
-Steps 2 can also be run separately:
+Step 2 can also be run separately:
 ```bash
-./getfiles.zsh ~/a/projects/fotos/images > tmp1.csv   # raw exiftool CSV
-./add_MD5.py < tmp1.csv > tmp2.csv                     # add MD5, split paths
+./getfiles.zsh ~/a/projects/fotos/keep/images > tmp1.csv   # raw exiftool CSV
+./add_MD5.py < tmp1.csv > fotos.csv                         # add MD5, split paths
 ```
 
 ## Architecture
@@ -44,18 +44,19 @@ Steps 2 can also be run separately:
 
 - **getfiles.zsh** — Recursively scans a directory for media files (jpg, jpeg, png, mov, mp4, heic) using `exiftool -f -csv`. The `-f` flag forces columns for missing fields (outputs `-` as placeholder). Outputs CSV to stdout.
 - **add_MD5.py** — Reads CSV from stdin, computes actual MD5 hash of each file (64KB buffer), splits `SourceFile` into separate `path` and `filename` columns, writes enriched CSV to stdout. Progress logged to stderr.
-- **insert_files.sql** — Creates a 12-column `staging` table, imports `tmp.csv`, INSERTs into `fotos`, drops staging, and creates the `qui` convenience view.
-- **create_tables.sql** — Defines the `fotos` table (13 columns including id) and an incomplete `actions` table.
+- **insert_files.sql** — Creates a 12-column `staging` table (c1–c12), imports `fotos.csv`, INSERTs into `fotos`, then drops staging.
+- **create_tables.sql** — Defines the `fotos` table (13 columns including id) and the `actions` view.
+- **delete_files.py** — Deletes files listed in a two-column CSV (`path`, `name`). Supports `--dry-run` to preview without deleting. Usage: `python delete_files.py [--dry-run] files.csv`
 
 ### Database Schema
 
-**fotos** table: `id`, `path`, `name`, `bytes`, `dt_taken`, `dt_created`, `camera`, `lens`, `lat`, `lon`, `img_size`, `duration`, `MD5`
+**fotos** table: `id`, `path`, `name`, `bytes`, `dt_taken`, `dt_created`, `camera`, `lens`, `lat`, `lon`, `img_size`, `duration`, `md5`
 
-**actions** table: `id`, `act`, `dt_act`, `note` (has a malformed foreign key reference to fotos)
+**actions** view: joins `fotos` and `notes` on `fotos.id = notes.fotos_id`, exposing `id`, `path`, `name`, `action`, `category`, `title`. Defined in `create_tables.sql`. Requires a `notes` table (not created by `create_tables.sql` — load from `notes.csv` separately).
 
 ### Known Issues
 
-- `insert_files.sql` line 27 has a syntax error: `MD5. camera` should be `MD5, camera` in the `qui` view definition.
-- The `actions` table has a malformed foreign key declaration (`foriegn key (fotos.id)` instead of proper `FOREIGN KEY` syntax).
-- `insert_files.sql` imports from `tmp.csv` but the pipeline outputs `tmp2.csv` — these must match.
+- `create_tables.sql` ends with an orphaned `select * from xxx limit 6;` debug line that causes an error on first run. Remove it before running.
+- `create_tables.sql` defines the column as `md5` (lowercase) while `insert_files.sql` references it as `MD5` (uppercase). SQLite is case-insensitive for column names so this works, but standardizing to one casing would be cleaner.
+- The `notes` table used by the `actions` view is not created by `create_tables.sql`. It must be created and populated separately (e.g., imported from `notes.csv`).
 - exiftool's `-MD5` flag doesn't actually produce MD5 hashes, which is why `add_MD5.py` computes them separately.
