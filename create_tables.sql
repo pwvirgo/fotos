@@ -1,5 +1,7 @@
+/* document status of images as they are edited */
+
 CREATE TABLE fotos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    img_id      INTEGER PRIMARY KEY AUTOINCREMENT,
     path        TEXT,
     name        TEXT,
     bytes       INTEGER,
@@ -14,13 +16,26 @@ CREATE TABLE fotos (
     md5         TEXT
 );
 
-drop view if exists actions;
-create view actions as 
-	select f.id, f.path, f.name, n.action, n.category, n.title 
-		from fotos as f
-		join  notes as n
-		on f.id = n.fotos_id; 
+CREATE TABLE notes (
+    note_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    category    TEXT,
+    comment     TEXT,
+    img_id      INTEGER,
+    note_dt     TEXT DEFAULT (datetime('now')),
+    FOREIGN KEY (img_id) REFERENCES fotos(img_id)
+);
 
-select * from xxx limit 6;
+-- action/status use CHECK for now as a fixed vocabulary; may become lookup
+-- tables later if the set of values needs to grow without editing this schema.
+CREATE TABLE actions (
+    action_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    action      TEXT CHECK(action IN ('mv','delete','rotate','resize','crop','edit','other')),
+    request_dt  TEXT DEFAULT (datetime('now')),
+    status_dt   TEXT,
+    status      TEXT CHECK(status IN ('done','pending','failed')) DEFAULT 'pending',
+    img_id      INTEGER,
+    FOREIGN KEY (img_id) REFERENCES fotos(img_id)
+);
 
-
+CREATE INDEX idx_notes_img_id   ON notes(img_id);
+CREATE INDEX idx_actions_img_id ON actions(img_id);

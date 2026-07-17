@@ -1,4 +1,7 @@
 #!/bin/zsh
+# find all image files in the folder specified on the command line
+# and output their names, paths, metadata, md5 Hashes to stdout in CSV format
+# using exiftool
 
 # Check if a directory was provided; if not, use the current directory ('.')
 TARGET_DIR="${1:-.}"
